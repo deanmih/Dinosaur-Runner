@@ -68,6 +68,7 @@ function updateCanvas() {
 }
 
 addEventListener("keydown", function(e) {
+    if (e.key == SPACE_KEY) playJumpSound();
     if (e.key == ARROW_DOWN_KEY) playerHeight = PLAYER_HEIGHT_CROUCH, playerYcoord = 400;
 });
 
@@ -83,6 +84,11 @@ function playerYcoordUpdate() {
 
 function resetPlayerYcoord() {
     playerYcoord = 350;
+}
+
+function playJumpSound() {
+    let audio = new Audio('Sounds/jumpSound.mp3');
+    audio.play();
 }
 
 let backgroundParticles = [];
@@ -190,6 +196,12 @@ function handlePlayerCollision() {
     refreshBtn.innerHTML = "refresh game";
     document.getElementById("buttonContainer").appendChild(refreshBtn);
     document.getElementById(START_GAME_BTN_ID).innerHTML = "game ended";
+    playGameOverSound();
+}
+
+function playGameOverSound() {
+    let audio = new Audio('Sounds/gameOverSound.mp3');
+    audio.play();
 }
 
 function refreshGame() {
