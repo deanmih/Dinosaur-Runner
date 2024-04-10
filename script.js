@@ -68,14 +68,22 @@ function updateCanvas() {
 }
 
 addEventListener("keydown", function(e) {
-    if (e.key == SPACE_KEY) playerYcoord = 290;
     if (e.key == ARROW_DOWN_KEY) playerHeight = PLAYER_HEIGHT_CROUCH, playerYcoord = 400;
 });
 
 addEventListener("keyup", function(e) {
-    if (e.key == SPACE_KEY) playerYcoord = PLAYER_START_Y;
+    if (e.key == SPACE_KEY) playerYcoordUpdate();    
     if (e.key == ARROW_DOWN_KEY) playerYcoord = PLAYER_START_Y, playerHeight = PLAYER_HEIGHT_INITIAL;
 });
+
+function playerYcoordUpdate() {
+    playerYcoord = 290;
+    setTimeout(resetPlayerYcoord, 500);
+}
+
+function resetPlayerYcoord() {
+    playerYcoord = 350;
+}
 
 let backgroundParticles = [];
 
