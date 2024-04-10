@@ -183,9 +183,15 @@ function increaseSpeed() {
         backgroundParticleSpeed += SPEED_INCREMENT;
         obstacleSpeed += SPEED_INCREMENT;
         speedIncreasedForCurrentScore = true;
+        playScoreUpSound();
     } else if (score % 100 !== 0) {
         speedIncreasedForCurrentScore = false;
     }
+}
+
+function playScoreUpSound() {
+    let audio = new Audio('Sounds/scoreUp.mp3');
+    audio.play();
 }
 
 function handlePlayerCollision() {
