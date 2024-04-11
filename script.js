@@ -83,7 +83,7 @@ addEventListener("keydown", function(e) {
 });
 
 addEventListener("keyup", function(e) {
-    if (e.key == SPACE_KEY) {
+    if (e.key == SPACE_KEY && playerYcoord == PLAYER_START_Y) {
         needToGoUp = true;    
     }
     if (e.key == ARROW_DOWN_KEY) playerYcoord = PLAYER_START_Y, playerHeight = PLAYER_HEIGHT_INITIAL;
