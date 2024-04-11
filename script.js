@@ -22,6 +22,7 @@ const OBSTACLE_DEFAULT_SPEED = 5;
 const SPEED_INCREMENT = 2;
 const DELAY_FACTOR_BACKGROUND_PARTICLES = 50;
 const DELAY_FACTOR_OBSTACLES = 200;
+const JUMP_PEAK = 100;
 
 let canvas = document.querySelector(`#${CANVAS_ID}`);
 let ctx = canvas.getContext('2d');
@@ -36,6 +37,9 @@ let playerYcoord = PLAYER_START_Y;
 let playerHeight = PLAYER_HEIGHT_INITIAL;
 let backgroundParticleSpeed = BACKGROUND_PARTICLE_DEFAULT_SPEED;
 let obstacleSpeed = OBSTACLE_DEFAULT_SPEED;
+let needToGoUp = false;
+let upAndDownVelocity = 10;
+let needToGoDown = false;
 
 function generatePlayer() {
     document.getElementById(START_GAME_BTN_ID).innerHTML = "running";
@@ -58,6 +62,12 @@ function updateCanvas() {
     if (!gameIsRunning) return;
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     checkCollision();
+    if (needToGoUp == true) {
+        updatePlayerHeightGoingUp();
+    } 
+    if (needToGoDown == true) {
+        updatePlayerHeightGoingDown();
+    }
     drawPlayer();
     drawGround();
     delayBackgroundParticlesGeneration();
@@ -73,17 +83,25 @@ addEventListener("keydown", function(e) {
 });
 
 addEventListener("keyup", function(e) {
-    if (e.key == SPACE_KEY) playerYcoordUpdate();    
+    if (e.key == SPACE_KEY) {
+        needToGoUp = true;    
+    }
     if (e.key == ARROW_DOWN_KEY) playerYcoord = PLAYER_START_Y, playerHeight = PLAYER_HEIGHT_INITIAL;
 });
 
-function playerYcoordUpdate() {
-    playerYcoord = 290;
-    setTimeout(resetPlayerYcoord, 500);
+function updatePlayerHeightGoingUp() {
+    playerYcoord -= upAndDownVelocity;
+    if (playerYcoord == PLAYER_START_X) {
+        needToGoDown = true;
+        needToGoUp = false;
+    }
 }
 
-function resetPlayerYcoord() {
-    playerYcoord = 350;
+function updatePlayerHeightGoingDown() {
+    playerYcoord += upAndDownVelocity;
+    if (playerYcoord == PLAYER_START_Y) {
+        needToGoDown = false;
+    }
 }
 
 function playJumpSound() {
