@@ -24,6 +24,12 @@ const DELAY_FACTOR_BACKGROUND_PARTICLES = 50;
 const DELAY_FACTOR_OBSTACLES = 200;
 const JUMP_PEAK = 100;
 
+let img = new Image();
+img.src = 'Images/prj.png';
+
+let img2 = new Image();
+img2.src = 'Images/dino.png';
+
 let canvas = document.querySelector(`#${CANVAS_ID}`);
 let ctx = canvas.getContext('2d');
 let score = 0;
@@ -49,8 +55,8 @@ function generatePlayer() {
 }
 
 function drawPlayer() {
-    ctx.fillStyle = "black";
-    ctx.fillRect(playerXcoord, playerYcoord, PLAYER_WIDTH, playerHeight);
+    //ctx.fillStyle = "black";
+    ctx.drawImage(img2, playerXcoord, playerYcoord, PLAYER_WIDTH, playerHeight);
 }
 
 function drawGround() {
@@ -79,14 +85,20 @@ function updateCanvas() {
 
 addEventListener("keydown", function(e) {
     if (e.key == SPACE_KEY) playJumpSound();
-    if (e.key == ARROW_DOWN_KEY) playerHeight = PLAYER_HEIGHT_CROUCH, playerYcoord = 400;
+    if (e.key == ARROW_DOWN_KEY && needToGoDown == false && needToGoUp == false) {
+        playerHeight = PLAYER_HEIGHT_CROUCH;
+        playerYcoord = 400;
+    }
 });
 
 addEventListener("keyup", function(e) {
-    if (e.key == SPACE_KEY && playerYcoord == PLAYER_START_Y) {
+    if (e.key == SPACE_KEY && playerYcoord == PLAYER_START_Y && needToGoDown == false) {
         needToGoUp = true;    
     }
-    if (e.key == ARROW_DOWN_KEY) playerYcoord = PLAYER_START_Y, playerHeight = PLAYER_HEIGHT_INITIAL;
+    if (e.key == ARROW_DOWN_KEY && needToGoDown == false && needToGoUp == false) {
+        playerYcoord = PLAYER_START_Y; 
+        playerHeight = PLAYER_HEIGHT_INITIAL;
+    }
 });
 
 function updatePlayerHeightGoingUp() {
@@ -101,6 +113,7 @@ function updatePlayerHeightGoingDown() {
     playerYcoord += upAndDownVelocity;
     if (playerYcoord == PLAYER_START_Y) {
         needToGoDown = false;
+        needToGoUp = false;
     }
 }
 
@@ -169,8 +182,8 @@ function drawObstacles() {
             scoreBox2.innerHTML = score;
         } else {
             obstacles[i][0] -= obstacles[i][2];
-            ctx.fillStyle = 'black';
-            ctx.fillRect(obstacles[i][0], obstacles[i][1], OBSTACLE_WIDTH, OBSTACLE_HEIGHT);
+            //ctx.fillStyle = 'black';
+            ctx.drawImage(img, obstacles[i][0], obstacles[i][1], OBSTACLE_WIDTH, OBSTACLE_HEIGHT);
         }
     }
 }
