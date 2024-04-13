@@ -23,6 +23,7 @@ const SPEED_INCREMENT = 2;
 const DELAY_FACTOR_BACKGROUND_PARTICLES = 50;
 const DELAY_FACTOR_OBSTACLES = 200;
 const JUMP_PEAK = 100;
+const THOUSAND = 1000;
 
 let img = new Image();
 img.src = 'Images/prj.png';
@@ -55,7 +56,6 @@ function generatePlayer() {
 }
 
 function drawPlayer() {
-    //ctx.fillStyle = "black";
     ctx.drawImage(img2, playerXcoord, playerYcoord, PLAYER_WIDTH, playerHeight);
 }
 
@@ -68,17 +68,11 @@ function updateCanvas() {
     if (!gameIsRunning) return;
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     checkCollision();
-    if (needToGoUp == true) {
-        updatePlayerHeightGoingUp();
-    } 
-    if (needToGoDown == true) {
-        updatePlayerHeightGoingDown();
-    }
+    updatePlayerJump();
     drawPlayer();
     drawGround();
-    delayBackgroundParticlesGeneration();
+    delayBackgroundParticlesAndObstacleGeneration();
     drawBackgroundParticles();
-    delayObstacleGeneration();
     drawObstacles();
     increaseSpeed();
 }
@@ -101,19 +95,20 @@ addEventListener("keyup", function(e) {
     }
 });
 
-function updatePlayerHeightGoingUp() {
-    playerYcoord -= upAndDownVelocity;
-    if (playerYcoord == PLAYER_START_X) {
+function updatePlayerJump() {
+    if (needToGoUp) {
+        playerYcoord -= upAndDownVelocity;
+        if (playerYcoord == PLAYER_START_X) {
         needToGoDown = true;
         needToGoUp = false;
+        }
     }
-}
-
-function updatePlayerHeightGoingDown() {
-    playerYcoord += upAndDownVelocity;
-    if (playerYcoord == PLAYER_START_Y) {
-        needToGoDown = false;
-        needToGoUp = false;
+    if (needToGoDown) {
+        playerYcoord += upAndDownVelocity;
+        if (playerYcoord == PLAYER_START_Y) {
+            needToGoDown = false;
+            needToGoUp = false;
+        }
     }
 }
 
@@ -123,12 +118,17 @@ function playJumpSound() {
 }
 
 let backgroundParticles = [];
+let obstacles = [];
 
-function delayBackgroundParticlesGeneration() {
-    let rnd = Math.floor(Math.random() * 1000);
+function delayBackgroundParticlesAndObstacleGeneration() {
+    let rnd = Math.floor(Math.random() * THOUSAND);
     if (rnd % DELAY_FACTOR_BACKGROUND_PARTICLES == 0) {
         backgroundParticlesStartCoordinates();
         drawBackgroundParticles();
+    }
+    if (rnd % DELAY_FACTOR_OBSTACLES == 0) {
+        obstaclesStartCoordinates();
+        drawObstacles();
     }
 }
 
@@ -153,19 +153,9 @@ function drawBackgroundParticles() {
     }
 }
 
-let obstacles = [];
-
-function delayObstacleGeneration() {
-    let rnd = Math.floor(Math.random() * 1000);
-    if (rnd % DELAY_FACTOR_OBSTACLES == 0) {
-        obstaclesStartCoordinates();
-        drawObstacles();
-    }
-}
-
 function obstaclesStartCoordinates() {
-    let up = Math.floor(Math.random() * 1000);
-    let obstacleX = Math.floor(Math.random() * 3000) + canvasWidth;
+    let up = Math.floor(Math.random() * THOUSAND);
+    let obstacleX = Math.floor(Math.random() * (3 * THOUSAND)) + canvasWidth;
     let obstacleY = OBSTACLE_INITIAL_Y;
     if (up % 2 == 0) {
         obstacleY = OBSTACLE_CROUCH_Y;
@@ -182,7 +172,6 @@ function drawObstacles() {
             scoreBox2.innerHTML = score;
         } else {
             obstacles[i][0] -= obstacles[i][2];
-            //ctx.fillStyle = 'black';
             ctx.drawImage(img, obstacles[i][0], obstacles[i][1], OBSTACLE_WIDTH, OBSTACLE_HEIGHT);
         }
     }
@@ -195,7 +184,12 @@ function checkCollision() {
         let obstacleWidth = OBSTACLE_WIDTH;
         let obstacleHeight = OBSTACLE_HEIGHT;
         let playerWidth = PLAYER_WIDTH;
-        let playerHeight = playerYcoord === 290 ? PLAYER_HEIGHT_CROUCH : PLAYER_HEIGHT_INITIAL;
+        let playerHeight;
+        if (playerYcoord === 290) {
+            playerHeight = PLAYER_HEIGHT_CROUCH;
+        } else {
+            playerHeight = PLAYER_HEIGHT_INITIAL;
+        }
         let playerX = playerXcoord;
         let playerY = playerYcoord;
         if (
