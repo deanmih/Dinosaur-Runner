@@ -79,17 +79,17 @@ function updateCanvas() {
 
 addEventListener("keydown", function(e) {
     if (e.key == SPACE_KEY) playJumpSound();
-    if (e.key == ARROW_DOWN_KEY && needToGoDown == false && needToGoUp == false) {
+    if (e.key == ARROW_DOWN_KEY && !needToGoDown && !needToGoUp) {
         playerHeight = PLAYER_HEIGHT_CROUCH;
         playerYcoord = 400;
     }
 });
 
 addEventListener("keyup", function(e) {
-    if (e.key == SPACE_KEY && playerYcoord == PLAYER_START_Y && needToGoDown == false) {
+    if (e.key == SPACE_KEY && playerYcoord == PLAYER_START_Y && !needToGoDown) {
         needToGoUp = true;    
     }
-    if (e.key == ARROW_DOWN_KEY && needToGoDown == false && needToGoUp == false) {
+    if (e.key == ARROW_DOWN_KEY && !needToGoDown && !needToGoUp) {
         playerYcoord = PLAYER_START_Y; 
         playerHeight = PLAYER_HEIGHT_INITIAL;
     }
@@ -99,8 +99,8 @@ function updatePlayerJump() {
     if (needToGoUp) {
         playerYcoord -= upAndDownVelocity;
         if (playerYcoord == PLAYER_START_X) {
-        needToGoDown = true;
-        needToGoUp = false;
+            needToGoDown = true;
+            needToGoUp = false;
         }
     }
     if (needToGoDown) {
@@ -135,7 +135,8 @@ function delayBackgroundParticlesAndObstacleGeneration() {
 function backgroundParticlesStartCoordinates() {
     for (let i = 0; i < 5; ++i) {
         let particleX = Math.floor(Math.random() * canvasWidth);
-        let particleY = Math.floor(Math.random() * (GROUND_Y - BACKGROUND_PARTICLE_SIZE));
+        let particleY = Math.floor(Math.random() * 
+	    (GROUND_Y - BACKGROUND_PARTICLE_SIZE));
         let particleData = [particleX, particleY, backgroundParticleSpeed];
         backgroundParticles.push(particleData);
     }
@@ -148,7 +149,8 @@ function drawBackgroundParticles() {
         } else {
             backgroundParticles[i][0] -= backgroundParticles[i][2];
             ctx.fillStyle = 'black';
-            ctx.fillRect(backgroundParticles[i][0], backgroundParticles[i][1], BACKGROUND_PARTICLE_SIZE, BACKGROUND_PARTICLE_SIZE);
+            ctx.fillRect(backgroundParticles[i][0], backgroundParticles[i][1], 
+            BACKGROUND_PARTICLE_SIZE, BACKGROUND_PARTICLE_SIZE);
         }
     }
 }
@@ -172,7 +174,8 @@ function drawObstacles() {
             scoreBox2.innerHTML = score;
         } else {
             obstacles[i][0] -= obstacles[i][2];
-            ctx.drawImage(img, obstacles[i][0], obstacles[i][1], OBSTACLE_WIDTH, OBSTACLE_HEIGHT);
+            ctx.drawImage(img, obstacles[i][0], obstacles[i][1], 
+            OBSTACLE_WIDTH, OBSTACLE_HEIGHT);
         }
     }
 }
